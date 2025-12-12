@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FadelSM TempMail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #202124;
+            color: #e8eaed;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+            animation: slideDown 0.5s ease;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .welcome-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #292a2d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .welcome-icon svg {
+            width: 50px;
+            height: 50px;
+            fill: #667eea;
+        }
+
+        .welcome-screen h2 {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .welcome-screen p {
+            color: #9aa0a6;
+            font-size: 16px;
+            max-width: 500px;
+            margin-bottom: 32px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .main-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .main-content.active {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 24px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
+            background: #292a2d;
+            border: 1px solid #3c4043;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .email-display {
+            animation: slideUp 0.5s ease;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            color: #9aa0a6;
+            font-weight: 400;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .icon-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .icon-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .email-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #202124;
+            padding: 14px;
+            border-radius: 8px;
+        }
+
+        .email-text {
+            flex: 1;
+            font-size: 14px;
+            word-break: break-all;
+            color: #e8eaed;
+        }
+
+        .inbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #3c4043;
+        }
+
+        .inbox-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .inbox-title svg {
+            width: 20px;
+            height: 20px;
+            fill: #9aa0a6;
+        }
+
+        .count {
+            color: #9aa0a6;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .message-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .message-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .message-list::-webkit-scrollbar-track {
+            background: #202124;
+        }
+
+        .message-list::-webkit-scrollbar-thumb {
+            background: #3c4043;
+            border-radius: 4px;
+        }
+
+        .message-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #3c4043;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message-item:hover {
+            background: #2d2e31;
+        }
+
+        .message-item.active {
+            background: #2d2e31;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .message-from {
+            font-size: 14px;
+            font-weight: 500;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .message-subject {
+            font-size: 13px;
+            color: #bdc1c6;
+            margin-bottom: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .message-date {
+            font-size: 12px;
+            color: #9aa0a6;
+        }
+
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: #9aa0a6;
+        }
+
+        .empty-state svg {
+            width: 60px;
+            height: 60px;
+            fill: #3c4043;
+            margin-bottom: 16px;
+        }
+
+        .message-detail {
+            background: #292a2d;
+            border: 1px solid #3c4043;
+            border-radius: 12px;
+            height: fit-content;
+            min-height: 600px;
+            animation: slideLeft 0.4s ease;
+        }
+
+        .detail-header {
+            padding: 24px;
+            border-bottom: 1px solid #3c4043;
+        }
+
+        .detail-subject {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+
+        .detail-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .info-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .info-label {
+            color: #9aa0a6;
+            min-width: 60px;
+        }
+
+        .detail-body {
+            padding: 24px;
+            line-height: 1.6;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        .detail-body iframe {
+            width: 100%;
+            min-height: 400px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .placeholder-detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 600px;
+            color: #9aa0a6;
+        }
+
+        .placeholder-detail svg {
+            width: 80px;
+            height: 80px;
+            fill: #3c4043;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideLeft {
+            from { 
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content.active {
+                grid-template-columns: 1fr;
+            }
+
+            .message-detail {
+                display: none;
+            }
+
+            .message-detail.mobile-show {
+                display: block;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px;
+            }
+
+            .header {
+                margin-bottom: 24px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .welcome-screen h2 {
+                font-size: 24px;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+            </div>
+            <h1>FadelSM TempMail</h1>
+        </div>
+
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+            </div>
+            <h2>Generate Temporary Email</h2>
+            <p>Create a disposable email address instantly to protect your privacy and avoid spam</p>
+            <button class="btn-primary" onclick="createEmail()" id="generateBtn">Generate Email</button>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="sidebar">
+                <div class="card email-display">
+                    <div class="card-header">
+                        <span class="card-title">Your Temporary Email</span>
+                        <button class="icon-btn" onclick="createEmail()" id="refreshEmailBtn" title="Generate New Email">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="email-box">
+                        <span class="email-text" id="emailDisplay">Loading...</span>
+                        <button class="icon-btn" onclick="copyEmail()" id="copyBtn" title="Copy Email">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="inbox-header">
+                        <div class="inbox-title">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 3H4.99c-1.11 0-1.98.9-1.98 2L3 19c0 1.1.88 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12h-4c0 1.66-1.35 3-3 3s-3-1.34-3-3H4.99V5H19v10z"/>
+                            </svg>
+                            <span>Inbox</span>
+                            <span class="count" id="messageCount">(0)</span>
+                        </div>
+                        <button class="icon-btn" onclick="fetchMessages()" id="refreshBtn" title="Refresh">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="message-list" id="messageList">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                            <p>No messages yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message-detail" id="messageDetail">
+                <div class="placeholder-detail">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H4.99c-1.11 0-1.98.9-1.98 2L3 19c0 1.1.88 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12h-4c0 1.66-1.35 3-3 3s-3-1.34-3-3H4.99V5H19v10z"/>
+                    </svg>
+                    <p>Select a message to view</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.mail.tm';
+        let currentEmail = '';
+        let currentToken = '';
+        let messages = [];
+        let autoRefreshInterval;
+
+        function randomStr(len = 10) {
+            return Math.random().toString(36).substring(2, 2 + len);
+        }
+
+        async function createEmail() {
+            const btn = document.getElementById('generateBtn');
+            const refreshBtn = document.getElementById('refreshEmailBtn');
+            
+            if (btn) btn.disabled = true;
+            if (refreshBtn) refreshBtn.disabled = true;
+            if (btn) btn.textContent = 'Generating...';
+
+            try {
+                const domainRes = await fetch(`${API_BASE}/domains`);
+                const domainData = await domainRes.json();
+                const domain = domainData['hydra:member'][0].domain;
+
+                const address = `${randomStr(8)}@${domain}`;
+                const password = randomStr(12);
+
+                await fetch(`${API_BASE}/accounts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address, password })
+                });
+
+                const tokenRes = await fetch(`${API_BASE}/token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ address, password })
+                });
+                const tokenData = await tokenRes.json();
+
+                currentEmail = address;
+                currentToken = tokenData.token;
+                messages = [];
+
+                document.getElementById('emailDisplay').textContent = address;
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('mainContent').classList.add('active');
+
+                startAutoRefresh();
+                fetchMessages();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to create email. Please try again.');
+            }
+
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Generate Email';
+            }
+            if (refreshBtn) refreshBtn.disabled = false;
+        }
+
+        async function fetchMessages() {
+            if (!currentToken) return;
+
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) {
+                refreshBtn.disabled = true;
+                refreshBtn.querySelector('svg').classList.add('loading');
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/messages`, {
+                    headers: { Authorization: `Bearer ${currentToken}` }
+                });
+                const data = await res.json();
+                messages = data['hydra:member'] || [];
+
+                renderMessages();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+
+            if (refreshBtn) {
+                refreshBtn.disabled = false;
+                refreshBtn.querySelector('svg').classList.remove('loading');
+            }
+        }
+
+        function renderMessages() {
+            const messageList = document.getElementById('messageList');
+            const messageCount = document.getElementById('messageCount');
+
+            messageCount.textContent = `(${messages.length})`;
+
+            if (messages.length === 0) {
+                messageList.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                        <p>No messages yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            messageList.innerHTML = messages.map(msg => `
+                <div class="message-item" onclick="viewMessage('${msg.id}')">
+                    <div class="message-header">
+                        <span class="message-from">${msg.from?.address || 'Unknown'}</span>
+                        <button class="icon-btn" onclick="event.stopPropagation(); deleteMessage('${msg.id}')" title="Delete">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                            </svg>
+                        </button>
+                    </div>
+         
